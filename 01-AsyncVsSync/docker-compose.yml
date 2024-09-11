@@ -1,0 +1,34 @@
+﻿services:
+
+  backend:
+    build: "./AsyncVsSync.Backend"
+    container_name: async-vs-sync-backend
+    ports:
+      - "5203:80"
+    environment:
+      - ASPNETCORE_URLS=http://+:80
+      - Serilog__MinimumLevel__Override__Microsoft.AspNetCore=Warning
+      - Serilog__MinimumLevel__Override__Serilog.AspNetCore=Warning
+    networks:
+      - async-vs-sync-network
+    deploy:
+      resources:
+        limits:
+          cpus: "4"
+          memory: 1G
+  
+  client:
+    build: "./AsyncVsSync.App/"
+    container_name: async-vs-sync-app
+    environment:
+      - Url=http://backend
+    networks:
+      - async-vs-sync-network
+    depends_on:
+      - backend
+    command: [ "sleep", "infinity" ]
+
+networks:
+  async-vs-sync-network:
+    name: async-vs-sync-network
+    driver: bridge

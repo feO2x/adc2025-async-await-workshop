@@ -3,6 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01 Why async await is important for service scalability", "01 Why async await is important for service scalability", "{11314D7E-9555-4CE1-B995-EF6A15C39F49}"
+	ProjectSection(SolutionItems) = preProject
+		01-AsyncVsSync\docker-compose.yml = 01-AsyncVsSync\docker-compose.yml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsyncVsSync.Backend", "01-AsyncVsSync\AsyncVsSync.Backend\AsyncVsSync.Backend.csproj", "{DAB38EBD-8FEB-4EDD-AFFB-F7F33ABB2CA1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsyncVsSync.App", "01-AsyncVsSync\AsyncVsSync.App\AsyncVsSync.App.csproj", "{DA91918D-3268-4A5C-B9CD-BC3785528672}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -10,5 +19,19 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DAB38EBD-8FEB-4EDD-AFFB-F7F33ABB2CA1} = {11314D7E-9555-4CE1-B995-EF6A15C39F49}
+		{DA91918D-3268-4A5C-B9CD-BC3785528672} = {11314D7E-9555-4CE1-B995-EF6A15C39F49}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DAB38EBD-8FEB-4EDD-AFFB-F7F33ABB2CA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAB38EBD-8FEB-4EDD-AFFB-F7F33ABB2CA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAB38EBD-8FEB-4EDD-AFFB-F7F33ABB2CA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAB38EBD-8FEB-4EDD-AFFB-F7F33ABB2CA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA91918D-3268-4A5C-B9CD-BC3785528672}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA91918D-3268-4A5C-B9CD-BC3785528672}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA91918D-3268-4A5C-B9CD-BC3785528672}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA91918D-3268-4A5C-B9CD-BC3785528672}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
