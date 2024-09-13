@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="Light.GuardClauses" Version="13.0.0" />
+        <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+        <PackageReference Include="System.Linq.Async" Version="6.0.1" />
+        <PackageReference Include="System.Reactive" Version="6.0.1" />
+        <PackageReference Include="protobuf-net.BuildTools" Version="3.2.52" PrivateAssets="all" />
+        <PackageReference Include="protobuf-net.Grpc.AspNetCore" Version="1.2.2" />
+    </ItemGroup>
+
+</Project>

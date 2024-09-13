@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\AsyncStreamingGrpc\AsyncStreamingGrpc.csproj" />
+        <PackageReference Include="FluentAssertions" Version="[7.0.0]" />
+        <PackageReference Include="Grpc.Net.Client" Version="2.71.0" />
+        <PackageReference Include="Light.Xunit" Version="1.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.4" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+        <PackageReference Include="Serilog.Sinks.XUnit" Version="3.0.19" />
+        <PackageReference Include="protobuf-net.Grpc" Version="1.2.2" />
+        <PackageReference Include="xunit" Version="2.9.3" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="3.0.2" PrivateAssets="all" />
+    </ItemGroup>
+
+</Project>

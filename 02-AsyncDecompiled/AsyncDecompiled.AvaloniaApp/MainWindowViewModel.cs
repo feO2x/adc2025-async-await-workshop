@@ -133,8 +133,8 @@ public sealed class MainWindowViewModel : BaseNotifyPropertyChanged
                 ViewModel.Result = string.Empty;
                 ViewModel.IsCalculating = true;
 
-                var taskAwaiter = Math.CalculateLowestCommonMultipleAsync(ViewModel.FirstNumber, ViewModel.SecondNumber)
-                   .GetAwaiter();
+                var taskAwaiter =
+                    Math.CalculateLowestCommonMultipleAsync(ViewModel.FirstNumber, ViewModel.SecondNumber).GetAwaiter();
                 if (taskAwaiter.IsCompleted)
                 {
                     goto Continuation;
