@@ -1,5 +1,7 @@
 using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -14,16 +16,17 @@ public static class DeleteContactEndpoint
     public static void MapDeleteContact(this WebApplication app) =>
         app.MapDelete("/api/contacts/{id:required:guid}", DeleteContact);
 
-    public static IResult DeleteContact(
+    public static async Task<IResult> DeleteContact(
         WebApiDbContext dbContext,
         ILogger logger,
-        Guid id
+        Guid id,
+        CancellationToken cancellationToken = default
     )
     {
-        var contact = dbContext
+        var contact = await dbContext
            .Contacts
            .Include(c => c.Addresses)
-           .FirstOrDefault(c => c.Id == id);
+           .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
 
         if (contact is null)
         {
@@ -32,7 +35,7 @@ public static class DeleteContactEndpoint
 
         dbContext.Addresses.RemoveRange(contact.Addresses);
         dbContext.Contacts.Remove(contact);
-        dbContext.SaveChanges();
+        await dbContext.SaveChangesAsync(cancellationToken);
 
         logger.Information("{@Contact} was deleted successfully", contact);
         return Results.Ok(ContactDetailDto.FromContact(contact));
