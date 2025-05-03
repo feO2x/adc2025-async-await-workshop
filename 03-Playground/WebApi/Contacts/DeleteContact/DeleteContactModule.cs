@@ -5,5 +5,5 @@ namespace WebApi.Contacts.DeleteContact;
 public static class DeleteContactModule
 {
     public static IServiceCollection AddDeleteContact(this IServiceCollection services) =>
-        services;
+        services.AddScoped<IDeleteContactSession, EfDeleteContactSession>();
 }
