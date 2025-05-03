@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Light.GuardClauses;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Polly;
@@ -39,12 +40,74 @@ public sealed class OutboxProcessor : IOutboxProcessor, IDisposable
 
     public void Dispose() => _semaphore.Dispose();
 
-    public async ValueTask<bool> TryTriggerOutboxAsync(int timeoutInMilliseconds = 50) =>
-        throw new NotImplementedException();
+    public async ValueTask<bool> TryTriggerOutboxAsync(int timeoutInMilliseconds = 50)
+    {
+        timeoutInMilliseconds.MustBeGreaterThanOrEqualTo(-1);
 
-    public Task WaitForOutboxCompletionAsync() => throw new NotImplementedException();
+        // This method can be called from multiple threads concurrently. To make it thread-safe, we
+        // use a semaphore with a double-check lock.
+        if (Volatile.Read(ref _currentOperation) is not null)
+        {
+            return false;
+        }
 
-    public async Task CancelOutboxProcessingAsync() => throw new NotImplementedException();
+        // To not keep callers waiting indefinitely, we use a timeout to access the semaphore.
+        // The default value is a maximum wait time of 300 milliseconds.
+        if (!await _semaphore.WaitAsync(timeoutInMilliseconds).ConfigureAwait(false))
+        {
+            return false;
+        }
+
+        // If we end up here, we are in the critical section. We use a try-finally block to ensure that
+        // the semaphore is released even if an exception occurs.
+        try
+        {
+            // Here is the second part of the double-check lock.
+            if (Volatile.Read(ref _currentOperation) is not null)
+            {
+                return false;
+            }
+
+            // If we end up here, we need to start processing of the outbox messages.
+            var cancellationTokenSource = new CancellationTokenSource();
+            var currentTask = _resiliencePipeline
+               .ExecuteAsync(_processAsyncDelegate, this, cancellationTokenSource.Token)
+               .AsTask();
+            Volatile.Write(ref _currentOperation, new CurrentOperation(currentTask, cancellationTokenSource));
+            HandleCurrentTask(currentTask);
+            return true;
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
+    }
+
+    public Task WaitForOutboxCompletionAsync()
+    {
+        // We do not need to enter the semaphore here because we simply copy the current task to a local variable.
+        // This is an atomic operations on x86, x64, and ARM processors.
+        var currentOperation = Volatile.Read(ref _currentOperation);
+        return currentOperation?.Task ?? Task.CompletedTask;
+    }
+
+    public async Task CancelOutboxProcessingAsync()
+    {
+        var currentOperation = Volatile.Read(ref _currentOperation);
+        if (currentOperation is null)
+        {
+            return;
+        }
+
+        try
+        {
+            await currentOperation.CancellationTokenSource.CancelAsync();
+        }
+        catch (AggregateException exception)
+        {
+            _logger.Information(exception, "Outbox processing has been cancelled");
+        }
+    }
 
     private async void HandleCurrentTask(Task task)
     {
